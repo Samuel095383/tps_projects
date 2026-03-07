@@ -31,19 +31,24 @@ byte rowPins[ROWS] = {39, 41, 43, 45};
 byte colPins[COLS]  = {31, 33, 35, 37};
 Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
-// ─── Outputs ─────────────────────────────────────────────────────────────────
-int rosso   = 5;
-int giallo  = 4;
-int verde   = 3;
+// ─── RGB LED Pins ────────────────────────────────────────────────────────────
+int pinR = 5;  // Red Pin
+int pinG = 3;  // Green Pin
+int pinB = 4;  // Blue Pin (Used for Yellow/Process)
 int pinbuzz = 28;
 Servo Servo1;
 
-#define OPEN_SECONDS 15   // secondi porta aperta (modificabile)
+#define OPEN_SECONDS 15 
 
-// ─────────────────────────────────────────────────────────────────────────────
-// OLED helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── RGB Helper Function ─────────────────────────────────────────────────────
+// Call this to change colors easily: 1 = ON, 0 = OFF
+void setColor(int r, int g, int b) {
+  digitalWrite(pinR, r);
+  digitalWrite(pinG, g);
+  digitalWrite(pinB, b);
+}
 
+// ─── OLED helpers (unchanged) ────────────────────────────────────────────────
 void drawLock(bool locked) {
   if (locked) {
     display.drawCircle(64, 22, 10, SSD1306_WHITE);
@@ -92,8 +97,7 @@ void oledStatus(const char* line1, const char* line2, bool unlocked) {
 
 void oledCountdown(int secondi) {
   display.clearDisplay();
-  drawLock(false);  // lucchetto aperto
-
+  drawLock(false); 
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(20, 52);
@@ -107,20 +111,17 @@ void oledCountdown(int secondi) {
 void setup() {
   Serial.begin(9600);
 
-  pinMode(rosso,   OUTPUT);
-  pinMode(giallo,  OUTPUT);
-  pinMode(verde,   OUTPUT);
+  pinMode(pinR, OUTPUT);
+  pinMode(pinG, OUTPUT);
+  pinMode(pinB, OUTPUT);
   pinMode(pinbuzz, OUTPUT);
 
   Servo1.attach(9);
 
-  // Stato iniziale: chiuso a 90°
-  digitalWrite(verde,  LOW);
-  digitalWrite(giallo, LOW);
-  digitalWrite(rosso,  HIGH);
+  // Initial State: Locked (RED)
+  setColor(1, 0, 0); 
   Servo1.write(90);
 
-  // OLED init
   Wire.begin();
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
     Serial.println(F("OLED non trovato!"));
@@ -140,38 +141,28 @@ void setup() {
   oledReady();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 void loop() {
   customKey = customKeypad.getKey();
   if (customKey) {
-
     if (customKey == '*') {
       clearData();
       return;
     }
-
     Data[data_count] = customKey;
-    Serial.print('*');
     data_count++;
-
     digitalWrite(pinbuzz, HIGH);
     delay(50);
     digitalWrite(pinbuzz, LOW);
-
     oledPassword();
   }
 
   if (data_count == Password_Length - 1) {
     Data[data_count] = '\0';
-    Serial.println();
-
     if (strcmp(Data, Master) == 0) {
-      Serial.println(F("Password Corretta!"));
       oledStatus("Password OK!", "Accesso consentito", true);
       delay(800);
       unlock();
     } else {
-      Serial.println(F("Password Errata!"));
       oledStatus("Password errata!", "Accesso negato", false);
       Errore();
     }
@@ -180,59 +171,51 @@ void loop() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Functions
-// ─────────────────────────────────────────────────────────────────────────────
-
 void unlock() {
-  // ── APERTURA ──
-  digitalWrite(rosso, LOW);
-  Servo1.write(180);           // apri
-  blinkYellow(12);
-  digitalWrite(giallo, LOW);
-
-  //Servo1.write(180);           // apri
-  digitalWrite(verde, HIGH);   // verde fisso ON
+  // APERTURA
+  setColor(0, 0, 0); // Off
+  Servo1.write(180); 
+  blinkRGB(5, 1, 2, 0); // Blink Yellow (Red + Green)
+  
+  setColor(0, 1, 0); // Solid Green
   Serial.println(F("Porta APERTA"));
 
-  // ── COUNTDOWN ──
+  // COUNTDOWN
   for (int i = OPEN_SECONDS; i > 0; i--) {
     oledCountdown(i);
-    Serial.print(F("Chiusura in: "));
-    Serial.println(i);
     delay(1000);
   }
 
-  // ── CHIUSURA ──
-  digitalWrite(verde, LOW);
-  blinkYellow(3);
-  digitalWrite(giallo, LOW);
+  // CHIUSURA
+  setColor(0, 0, 0);
+  blinkRGB(3, 1, 1, 0); // Blink Yellow
 
-  Servo1.write(90);            // chiudi
-  digitalWrite(rosso, HIGH);   // rosso fisso ON
+  Servo1.write(90); 
+  setColor(1, 0, 0); // Solid Red
   Serial.println(F("Porta CHIUSA"));
 }
 
 void clearData() {
   while (data_count != 0) Data[data_count--] = 0;
   data_count = 0;
-  Serial.println(F("Inserire Password:"));
   oledReady();
 }
 
-void blinkYellow(int times) {
+// Flexible blinker: choose the color components to blink
+void blinkRGB(int times, int r, int g, int b) {
   for (int i = 0; i < times; i++) {
-    digitalWrite(giallo, HIGH); delay(200);
-    digitalWrite(giallo, LOW);  delay(200);
+    setColor(r, g, b); delay(200);
+    setColor(0, 0, 0); delay(200);
   }
 }
 
 void Errore() {
   for (int i = 0; i < 3; i++) {
     digitalWrite(pinbuzz, HIGH);
-    digitalWrite(rosso, LOW);
+    setColor(0, 0, 0);
     delay(150);
     digitalWrite(pinbuzz, LOW);
-    digitalWrite(rosso, HIGH);
+    setColor(1, 0, 0); // Flash Red
     delay(150);
   }
 }
