@@ -8,7 +8,7 @@
 6. buzzer
 7. Stampante 3d *
 ## Codice
-Il codice lo si può reperire da (qui)[].
+Il codice lo si può reperire da [QUI](https://github.com/Samuel095383/tps_projects/tree/main/progetto-tps).
 ## Foto e Video
 ![Foto1](https://github.com/Samuel095383/tps_projects/blob/main/assets/foto1.JPG "Foto1")
 ---
