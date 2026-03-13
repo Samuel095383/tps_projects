@@ -10,9 +10,14 @@
 ## Codice
 Il codice lo si può reperire da [QUI](https://github.com/Samuel095383/tps_projects/tree/main/progetto-tps).
 ## Foto e Video
-<img src="https://github.com/Samuel095383/tps_projects/blob/main/assets/foto1.JPG" width="300" height="200" alt="Foto1"/>
+
+<img src="https://github.com/Samuel095383/tps_projects/blob/main/assets/foto1.JPG" width="600" height="300" alt="Foto1"/>
+
 ---
-<img src="https://github.com/Samuel095383/tps_projects/blob/main/assets/foto2.JPG" width="300" height="200" alt="Foto2"/>
+
+<img src="https://github.com/Samuel095383/tps_projects/blob/main/assets/foto2.JPG" width="600" height="300" alt="Foto2"/>
+
 ---
+
 ![Video](https://github.com/Samuel095383/tps_projects/blob/main/assets/video1.mov "Video")
 
