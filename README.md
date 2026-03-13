@@ -10,7 +10,9 @@
 ## Codice
 Il codice lo si può reperire da (qui)[].
 ## Foto e Video
-![Alt text](https://github.com/Samuel095383/tps_projects/blob/main/assets/foto1.JPG "Foto1")
-![Alt text](https://github.com/Samuel095383/tps_projects/blob/main/assets/foto2.JPG"Foto2")
-![Alt text](https://github.com/Samuel095383/tps_projects/blob/main/assets/video1.mov "Video")
+![Foto1](https://github.com/Samuel095383/tps_projects/blob/main/assets/foto1.JPG "Foto1")
+---
+![Foto2](https://github.com/Samuel095383/tps_projects/blob/main/assets/foto2.JPG "Foto2")
+---
+![Video](https://github.com/Samuel095383/tps_projects/blob/main/assets/video1.mov "Video")
 
