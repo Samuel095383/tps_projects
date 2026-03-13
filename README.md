@@ -21,3 +21,7 @@ Il codice lo si può reperire da [QUI](https://github.com/Samuel095383/tps_proje
 
 ![Video](https://github.com/Samuel095383/tps_projects/blob/main/assets/video1.mov "Video")
 
+## Crediti
+- codice: Samuel Santorso
+- Progettazione 3d e Stampa: Samuel Santorso
+- Relazione: Filippo Ferro, Alessandro Badiale
